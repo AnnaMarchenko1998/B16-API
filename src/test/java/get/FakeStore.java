@@ -6,6 +6,7 @@ import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 public class FakeStore {
@@ -35,5 +36,25 @@ public class FakeStore {
 
         Assert.assertTrue(rate == 3.9);
         Assert.assertTrue(count == 120);
+    }
+
+    @Test
+    public void sumOfProductsTest(){
+        RestAssured.baseURI = "https://fakestoreapi.com/products";
+        Response response = RestAssured.given().accept("application/json")
+                .when().get()
+                .then().statusCode(200)
+                .extract().response();
+        List<Map<String,Object>> parseResponse = response.as(new TypeRef<List<Map<String, Object>>>() {
+        });
+        double sumOfPrice = 0.0;
+
+        for (int i=0; i< parseResponse.size(); i++){
+
+           sumOfPrice += Double.parseDouble(parseResponse.get(i).get("price").toString());
+        }
+        System.out.println(sumOfPrice);
+
+        Assert.assertTrue(sumOfPrice > 200);
     }
 }

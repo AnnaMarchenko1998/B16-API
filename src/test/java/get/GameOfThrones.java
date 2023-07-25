@@ -2,9 +2,11 @@ package get;
 
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
+import pojo.ContinentPojo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,5 +67,48 @@ public class GameOfThrones {
       }
 
         System.out.println(allContinents);
+    }
+
+    @Test
+    public void continentTest(){
+        RestAssured.baseURI = "https://thronesapi.com";
+        RestAssured.basePath = "api/v2/continents/0";
+
+        Response response = RestAssured.given().accept("application/json")
+                .when().get()
+                .then().statusCode(200)
+                .log().body()
+                .extract().response();
+
+       ContinentPojo parsedResponse =  response.as(ContinentPojo.class);
+       int id = parsedResponse.getId();
+       String name = parsedResponse.getName();
+       Assert.assertEquals(0,id);
+       Assert.assertEquals("Westeros", name);
+    }
+
+    @Test
+    public void continentTest2(){
+        RestAssured.baseURI = "https://thronesapi.com";
+        RestAssured.basePath ="api/v2/continents";
+        Response response = RestAssured.given().accept(ContentType.JSON)
+                .when().get()
+                .then().statusCode(200)
+                .extract().response();
+
+        //pojo deserialization
+        List <ContinentPojo> continentPojoList = new ArrayList<>();
+        ContinentPojo[] parsedResponse = response.as(ContinentPojo[].class);
+
+        Map<String, Integer> continentIdMap = new HashMap<>();
+
+        for (int i = 0; i < parsedResponse.length; i++){
+            ContinentPojo continentPojo = parsedResponse[i];
+            String name = continentPojo.getName();
+            int id = continentPojo.getId();
+            continentIdMap.put(name,id);
+        }
+
+
     }
 }
