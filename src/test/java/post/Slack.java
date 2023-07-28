@@ -3,7 +3,10 @@ package post;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.*;
@@ -174,6 +177,23 @@ public class Slack {
         }
     }
 
+}
+
+@Test
+    public void sendMessageTest2(){
+
+    RestAssured.baseURI = "https://slack.com";
+    RestAssured.basePath = "api/chat.postMessage";
+
+    Response response = RestAssured.given().accept(ContentType.JSON)
+            .contentType(ContentType.JSON)
+            .header("Authorization", "Bearer xoxb-4764264203175-5572283351303-ChTt1SkoH3zJPsSqvNZ3K8uq")
+            .body(PayloadUtils.getSlackPayload("Message sent from Java"))
+            .when().post()
+            .then().statusCode(200).log().body()
+            .body("ok", Matchers.is(true))
+            .body("message.text", Matchers.equalTo("Anna: Message sent from Java"))
+            .extract().response();
 
 
 }
