@@ -62,7 +62,8 @@ public class Petstore {
                 .body("name", Matchers.equalTo(updatedPetName));
 
 
-        //Anna API checking Git commands
+        //Anna API checking Git commands. My offer is waiting for me!!!
+        
 
 
 
